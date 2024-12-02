@@ -1,0 +1,86 @@
+Last login: Mon Dec  2 20:53:37 on ttys044
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+mos-MacBook-Air:~ mo$ cd Downloads/
+mos-MacBook-Air:Downloads mo$ ssh -i "maki.pem" ec2-user@52.73.75.107
+   ,     #_
+   ~\_  ####_        Amazon Linux 2023
+  ~~  \_#####\
+  ~~     \###|
+  ~~       \#/ ___   https://aws.amazon.com/linux/amazon-linux-2023
+   ~~       V~' '->
+    ~~~         /
+      ~~._.   _/
+         _/ _/
+       _/m/'
+Last login: Mon Dec  2 20:53:43 2024 from 92.40.189.95
+[ec2-user@ansible-server ~]$ 
+
+
+
+
+
+[ec2-user@ansible-server ~]$ sudo su - maki
+Last login: Mon Dec  2 20:53:48 UTC 2024 on pts/11
+[maki@ansible-server ~]$ cat jenkins-server2-setup.yml
+- hosts: jenkins-server
+  vars:
+    java_packages:
+      - java-17-amazon-corretto-devel
+    jenkins_packages:
+      - jenkins  
+  tasks:
+    - name: Download Jenkins repository file
+      get_url:
+        url: https://pkg.jenkins.io/redhat-stable/jenkins.repo
+        dest: /etc/yum.repos.d/jenkins.repo
+      become: true
+
+    - name: Import Jenkins-CI key
+      shell: rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+      become: true
+
+    - name: Install Java
+      yum:
+        name: "{{ java_packages }}"
+        state: present
+      become: true
+
+    - name: Install Jenkins
+      yum:
+        name: "{{ jenkins_packages }}"
+        state: present
+      become: true
+
+    - name: Start Jenkins service
+      service:
+        name: jenkins
+        state: started
+      become: true
+[maki@ansible-server ~]$ vim jenkins-server2-setup.yml
+
+- hosts: jenkins-server
+  vars:
+    java_packages:
+      - java-17-amazon-corretto-devel
+    jenkins_packages:
+      - jenkins
+  tasks:
+    - name: Download Jenkins repository file
+      get_url:
+        url: https://pkg.jenkins.io/redhat-stable/jenkins.repo
+        dest: /etc/yum.repos.d/jenkins.repo
+      become: true
+
+    - name: Import Jenkins-CI key
+      shell: rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+      become: true
+
+    - name: Install Java
+      yum:
+        name: "{{ java_packages }}"
+        state: present
+      become: true
+                                                              1,18          Top
